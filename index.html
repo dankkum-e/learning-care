@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>단꿈e 학습지원센터 | 통화 가능 시간 선택</title>
+<style>
+  :root{
+    --orange:#FF7A1A; --orange-d:#E9650A; --orange-l:#FFF1E6;
+    --ink:#222; --sub:#666; --line:#E6E6E6; --bg:#F6F6F4; --off:#B5B5B5;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",sans-serif;
+    font-size:15px;line-height:1.6;word-break:keep-all}
+  .wrap{max-width:480px;margin:0 auto;padding:16px 16px 40px}
+  .card{background:#fff;border-radius:16px;padding:22px 20px;box-shadow:0 1px 3px rgba(0,0,0,.05);margin-bottom:12px}
+  .brand{display:inline-block;font-weight:700;color:var(--orange-d);background:var(--orange-l);
+    padding:4px 10px;border-radius:8px;font-size:14px;margin-bottom:12px}
+  .intro p{margin:0 0 10px}
+  .intro p.note{color:var(--sub);font-size:13.5px;margin:12px 0 0;padding-top:12px;border-top:1px dashed var(--line)}
+  h2{font-size:16px;margin:0 0 16px;color:var(--orange-d)}
+  label.tit{display:block;font-weight:700;font-size:14px;margin:0 0 8px}
+  .field{margin-bottom:22px}
+  input[type=tel]{width:100%;height:52px;border:1.5px solid var(--line);border-radius:12px;
+    padding:0 14px;font-size:17px;letter-spacing:.5px;outline:none;background:#fff}
+  input[type=tel]:focus{border-color:var(--orange)}
+  .hint{font-size:12.5px;color:var(--sub);margin-top:6px;min-height:18px}
+  .hint.err{color:#D93025}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .box{border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:14px 8px;text-align:center;
+    cursor:pointer;user-select:none;transition:all .15s;font-family:inherit;color:inherit;font-size:16px;width:100%}
+  .box .s{display:block;font-size:12.5px;color:var(--sub);margin-top:2px}
+  .box.on{border-color:var(--orange);background:var(--orange-l);color:var(--orange-d);font-weight:700}
+  .box.on .s{color:var(--orange-d)}
+  .box:disabled{cursor:not-allowed;color:var(--off);background:#FAFAFA}
+  .box.time{padding:13px 6px;font-weight:600}
+  .box .full{display:block;font-size:11.5px;font-weight:500;color:var(--off)}
+  #times{margin-top:12px;display:none}
+  #times.show{display:block;animation:fade .2s}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .or{display:flex;align-items:center;gap:10px;color:var(--off);font-size:12.5px;margin:4px 0 14px}
+  .or:before,.or:after{content:"";flex:1;height:1px;background:var(--line)}
+  .optout{display:flex;align-items:center;gap:10px;text-align:left;padding:14px 16px;font-size:15px}
+  .optout .chk{width:22px;height:22px;border:1.5px solid var(--line);border-radius:6px;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff}
+  .optout.on .chk{background:var(--orange);border-color:var(--orange)}
+  .optout:disabled .chk{background:#F0F0F0}
+  .submit{width:100%;height:54px;border:0;border-radius:12px;background:var(--orange);color:#fff;
+    font-size:17px;font-weight:700;margin-top:22px;cursor:pointer;font-family:inherit}
+  .submit:disabled{background:#DADADA;cursor:not-allowed}
+  .done{text-align:center;padding:40px 20px}
+  .done .ic{width:64px;height:64px;border-radius:50%;background:var(--orange-l);color:var(--orange-d);
+    font-size:32px;line-height:64px;margin:0 auto 16px}
+  .done h3{margin:0 0 8px;font-size:19px}
+  .done p{margin:0;color:var(--sub)}
+  .done .pick{display:inline-block;margin:14px 0 4px;padding:8px 16px;border-radius:10px;
+    background:var(--orange-l);color:var(--orange-d);font-weight:700;font-size:17px}
+  .done .again{margin-top:22px;background:none;border:0;color:var(--sub);text-decoration:underline;font-size:13.5px;cursor:pointer;font-family:inherit}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#333;color:#fff;
+    padding:12px 18px;border-radius:10px;font-size:14px;max-width:90%;display:none;z-index:9}
+  .loading{opacity:.55;pointer-events:none}
+  .notice{font-size:13px;color:var(--orange-d);background:var(--orange-l);border-radius:10px;padding:10px 12px;margin-top:10px;display:none}
+  .privacy{margin-top:22px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .privacy .ptit{font-size:13.5px;font-weight:700;padding:12px 14px;background:#FAFAFA;border-bottom:1px solid var(--line)}
+  .privacy dl{margin:0;padding:10px 14px 4px;font-size:12.5px;color:var(--sub);line-height:1.55}
+  .privacy dt{font-weight:700;color:#444;margin-top:6px}
+  .privacy dt:first-child{margin-top:0}
+  .privacy dd{margin:0 0 2px}
+  .privacy .pnote{font-size:12px;color:var(--sub);padding:4px 14px 12px;margin:0}
+  .agree{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer;font-size:14px;user-select:none}
+  .agree input{position:absolute;opacity:0;pointer-events:none}
+  .agree .chk{width:22px;height:22px;border:1.5px solid var(--line);border-radius:6px;flex:none;
+    display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;margin-top:1px}
+  .agree.on .chk{background:var(--orange);border-color:var(--orange)}
+  .agree b{color:var(--orange-d);font-weight:700}
+  .preview{background:#FFF7D6;color:#7A5B00;font-size:12.5px;text-align:center;padding:6px;border-radius:8px;margin-bottom:10px;display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="preview" id="previewBar">미리보기 모드 · 시트에 기록되지 않습니다<br>(현재 11:40 가정 · 12:00은 마감 예시 · 010-0000-0000은 명단 외 번호 예시)</div>
+
+  <div id="formView">
+    <div class="card intro">
+      <span class="brand">[단꿈e 학습지원센터]</span>
+      <p>단꿈e 학습을 선택해 주셔서 감사합니다.</p>
+      <p>학습 시작에 도움이 되는 몇 가지 내용을 안내드리고자 연락드립니다.</p>
+      <p>아래에서 통화 가능한 시간대를 선택해 주시면 해당 시간에 맞춰 연락드리겠습니다.</p>
+      <p class="note">시간대를 선택하지 않으실 경우, 별도 시간 지정 없이 연락드릴 수 있는 점 참고 부탁드립니다.</p>
+    </div>
+
+    <div class="card" id="formCard">
+      <h2>▼ 통화 가능 시간대 선택하기</h2>
+
+      <div class="field">
+        <label class="tit" for="phone">연락처</label>
+        <input type="tel" id="phone" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000" maxlength="13">
+        <div class="hint" id="phoneHint">학습 신청 시 등록하신 연락처를 입력해 주세요.</div>
+      </div>
+
+      <div class="field" style="margin-bottom:14px">
+        <label class="tit">시간</label>
+        <div class="grid2">
+          <button type="button" class="box period" data-period="오전">오전<span class="s">11:00 ~ 12:30</span></button>
+          <button type="button" class="box period" data-period="오후">오후<span class="s">14:30 ~ 16:00</span></button>
+        </div>
+        <div class="notice" id="timeNotice"></div>
+        <div id="times">
+          <label class="tit" style="margin-top:16px">시간대</label>
+          <div class="grid2" id="timeGrid"></div>
+        </div>
+      </div>
+
+      <div class="or">또는</div>
+      <button type="button" class="box optout" id="optOut" disabled>
+        <span class="chk">✓</span><span>연락을 받지 않을게요</span>
+      </button>
+      <div class="hint" id="optHint">연락처를 입력하시면 선택할 수 있습니다.</div>
+
+      <div class="privacy">
+        <div class="ptit">개인정보 수집·이용 안내</div>
+        <dl>
+          <dt>수집 항목</dt><dd>휴대폰 번호, 통화 희망 시간대(또는 연락 희망 여부)</dd>
+          <dt>수집·이용 목적</dt><dd>학습 시작 안내를 위한 통화 일정 확인 및 연락</dd>
+          <dt>보유·이용 기간</dt><dd id="retention">수집·이용 목적 달성 후 지체 없이 파기</dd>
+        </dl>
+        <p class="pnote">동의를 거부하실 수 있으며, 거부하실 경우 통화 시간대 선택이 제한됩니다. 이 경우 별도 시간 지정 없이 연락드릴 수 있습니다.</p>
+        <label class="agree" id="agreeBox">
+          <input type="checkbox" id="agree">
+          <span class="chk">✓</span>
+          <span>위 내용을 확인했으며, 개인정보 수집·이용에 동의합니다. <b>(필수)</b></span>
+        </label>
+      </div>
+
+      <button type="button" class="submit" id="submitBtn" disabled>선택 완료</button>
+    </div>
+  </div>
+
+  <div id="doneView" class="card done" style="display:none">
+    <div class="ic">✓</div>
+    <h3 id="doneTitle">접수되었습니다</h3>
+    <div class="pick" id="donePick"></div>
+    <p id="doneMsg"></p>
+    <button type="button" class="again" id="againBtn">선택 변경하기</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================================================================
+ * [B 방식 - 구글 배너 없이 쓰기]
+ * 이 파일을 별도 주소(회사 웹서버, GitHub Pages 등)에 올릴 때만
+ * 아래 API_URL에 Apps Script 웹 앱 주소(…/exec)를 넣어 주세요.
+ * Apps Script 안에서 쓸 때(A 방식)는 비워 두면 됩니다.
+ * ================================================================ */
+var API_URL = 'https://script.google.com/macros/s/AKfycbwWUkj017tcWZwCtq-IavESVCwHQJjqgInUWt-f0cx0Bx5r1sukZVpjkFxcKuFLHSsPjQ/exec';
+
+(function(){
+  /* ── 서버 연결: Apps Script 내부 / 외부 주소(API) / 미리보기용 모의 서버 ── */
+  var HAS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+  var MODE = HAS_GAS ? 'gas' : (API_URL ? 'api' : 'mock');
+
+  var mock = {
+    nowMin: 11 * 60 + 40,          // 미리보기에서는 11:40으로 가정
+    counts: {'12:00': 5},
+    last: null,
+    slots: {'오전':['11:00','11:30','12:00','12:30'],'오후':['14:30','15:00','15:30','16:00']},
+    isPast: function(t){ var p = t.split(':'); return mock.nowMin >= (+p[0]) * 60 + (+p[1]); },
+    getPageData: function(){
+      var full = {}, past = {};
+      [].concat(mock.slots['오전'], mock.slots['오후']).forEach(function(t){
+        full[t] = (mock.counts[t]||0) >= 5; past[t] = mock.isPast(t);
+      });
+      return {slots: mock.slots, full: full, past: past};
+    },
+    submitChoice: function(p){
+      if (!p.agree) return {ok:false, code:'AGREE', message:'개인정보 수집·이용에 동의해 주세요.'};
+      if (p.phone === '01000000000') return {ok:false, code:'NOT_FOUND', message:'등록된 연락처를 찾을 수 없습니다. 학습 신청 시 입력하신 연락처를 다시 확인해 주세요.'};
+      if (!p.optOut && mock.isPast(p.time)) return {ok:false, code:'PAST', message:'선택하신 시간대가 이미 지났습니다. 다른 시간대를 선택해 주세요.', page: mock.getPageData()};
+      if (!p.optOut && (mock.counts[p.time]||0) >= 5 && mock.last !== p.time)
+        return {ok:false, code:'FULL', message:'선택하신 시간대가 방금 마감되었습니다. 다른 시간대를 선택해 주세요.', page: mock.getPageData()};
+      if (mock.last) mock.counts[mock.last]--;
+      if (!p.optOut) { mock.counts[p.time] = (mock.counts[p.time]||0) + 1; mock.last = p.time; } else mock.last = null;
+      return {ok:true, optOut:p.optOut, label: p.optOut ? '연락 원치 않음' : p.period + ' ' + p.time};
+    }
+  };
+
+  function api(fn, arg){
+    if (MODE === 'gas') return new Promise(function(resolve, reject){
+      google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[fn](arg);
+    });
+    if (MODE === 'api') {
+      if (fn === 'getPageData')
+        return fetch(API_URL + '?action=data&t=' + Date.now()).then(function(r){ return r.json(); });
+      // text/plain으로 보내야 브라우저 사전 확인(CORS) 없이 Apps Script로 전달됩니다
+      return fetch(API_URL, {method:'POST', body: JSON.stringify(arg), headers:{'Content-Type':'text/plain;charset=utf-8'}})
+        .then(function(r){ return r.json(); });
+    }
+    return new Promise(function(resolve){ setTimeout(function(){ resolve(mock[fn](arg)); }, 350); });
+  }
+
+  /* ── 상태 ── */
+  var $ = function(id){ return document.getElementById(id); };
+  var state = {period:null, time:null, optOut:false, agree:false, data:null};
+
+  function digits(v){ return (v||'').replace(/\D/g,'').slice(0,11); }
+  function fmt(d){
+    if (d.length < 4) return d;
+    if (d.length < 8) return d.slice(0,3)+'-'+d.slice(3);
+    if (d.length === 10) return d.slice(0,3)+'-'+d.slice(3,6)+'-'+d.slice(6);
+    return d.slice(0,3)+'-'+d.slice(3,7)+'-'+d.slice(7);
+  }
+  function phoneOk(){ return /^01[016789]\d{7,8}$/.test(digits($('phone').value)); }
+  function usable(t){ return state.data && !state.data.full[t] && !state.data.past[t]; }
+  function periodUsable(p){ return state.data && state.data.slots[p].some(usable); }
+
+  function toast(msg){
+    var t = $('toast'); t.textContent = msg; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display='none'; }, 4000);
+  }
+
+  function renderPeriods(){
+    var anyLeft = false;
+    document.querySelectorAll('.period').forEach(function(el){
+      var p = el.dataset.period, ok = !state.data || periodUsable(p);
+      if (ok) anyLeft = true;
+      el.disabled = !ok;
+      el.classList.toggle('on', ok && p === state.period && !state.optOut);
+      var allPast = state.data && state.data.slots[p].every(function(t){ return state.data.past[t]; });
+      el.querySelector('.s').textContent = ok ? el.dataset.range : (allPast ? '선택 가능 시간 지남' : '마감');
+    });
+    if (state.period && !periodUsable(state.period)) { state.period = null; state.time = null; }
+    var n = $('timeNotice');
+    if (state.data && !anyLeft) { n.textContent = '오늘 선택 가능한 시간대가 없습니다.'; n.style.display = 'block'; }
+    else n.style.display = 'none';
+  }
+
+  function renderTimes(){
+    var grid = $('timeGrid'); grid.innerHTML = '';
+    if (!state.period || !state.data) { $('times').classList.remove('show'); return; }
+    state.data.slots[state.period].forEach(function(t){
+      var past = state.data.past[t], full = state.data.full[t];
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'box time' + (state.time === t ? ' on' : '');
+      b.innerHTML = t + (past ? '<span class="full">지난 시간</span>' : full ? '<span class="full">마감</span>' : '');
+      b.disabled = !!(past || full);
+      b.onclick = function(){ state.time = t; state.optOut = false; refresh(); };
+      grid.appendChild(b);
+    });
+    $('times').classList.add('show');
+  }
+
+  function refresh(){
+    if (state.time && !usable(state.time)) state.time = null;
+    renderPeriods();
+    renderTimes();
+    var ok = phoneOk();
+    if (!ok && state.optOut) state.optOut = false;
+    $('optOut').disabled = !ok;
+    $('optOut').classList.toggle('on', state.optOut);
+    $('optHint').style.display = ok ? 'none' : 'block';
+    $('agreeBox').classList.toggle('on', state.agree);
+    $('submitBtn').disabled = !(ok && state.agree && (state.optOut || state.time));
+  }
+
+  /* ── 이벤트 ── */
+  document.querySelectorAll('.period').forEach(function(el){
+    el.dataset.range = el.querySelector('.s').textContent;
+    el.addEventListener('click', function(){
+      if (state.period !== el.dataset.period) state.time = null;
+      state.period = el.dataset.period; state.optOut = false; refresh();
+    });
+  });
+  $('phone').addEventListener('input', function(e){
+    e.target.value = fmt(digits(e.target.value));
+    var d = digits(e.target.value), h = $('phoneHint');
+    if (d.length >= 10 && !phoneOk()) { h.textContent = '휴대폰 번호 형식을 확인해 주세요.'; h.classList.add('err'); }
+    else { h.textContent = '학습 신청 시 등록하신 연락처를 입력해 주세요.'; h.classList.remove('err'); }
+    refresh();
+  });
+  $('optOut').addEventListener('click', function(){
+    if (!phoneOk()) return;
+    state.optOut = !state.optOut;
+    if (state.optOut) { state.period = null; state.time = null; }
+    refresh();
+  });
+  $('agree').addEventListener('change', function(e){ state.agree = e.target.checked; refresh(); });
+  $('submitBtn').addEventListener('click', function(){
+    var btn = this; btn.disabled = true; btn.textContent = '접수 중...';
+    $('formCard').classList.add('loading');
+    api('submitChoice', {phone: digits($('phone').value), period: state.period, time: state.time, optOut: state.optOut, agree: state.agree})
+      .then(function(res){
+        if (res.ok) return showDone(res);
+        toast(res.message || '다시 시도해 주세요.');
+        if (res.code === 'NOT_FOUND') {
+          var h = $('phoneHint'); h.textContent = res.message; h.classList.add('err');
+          $('phone').focus();
+        }
+        if (res.page) state.data = res.page;
+      })
+      .catch(function(){ toast('일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'); })
+      .then(function(){ btn.textContent = '선택 완료'; $('formCard').classList.remove('loading'); refresh(); });
+  });
+  $('againBtn').addEventListener('click', function(){
+    $('doneView').style.display = 'none'; $('formView').style.display = 'block';
+    loadData(); window.scrollTo(0,0);
+  });
+  // 페이지를 열어 둔 채 시간이 지난 경우를 대비해, 다시 화면으로 돌아오면 최신 현황을 불러옴
+  document.addEventListener('visibilitychange', function(){ if (!document.hidden) loadData(); });
+
+  function showDone(res){
+    $('formView').style.display = 'none'; $('doneView').style.display = 'block';
+    if (res.optOut) {
+      $('doneTitle').textContent = '확인되었습니다';
+      $('donePick').style.display = 'none';
+      $('doneMsg').textContent = '요청하신 대로 별도 연락은 드리지 않겠습니다. 궁금한 점이 있으시면 언제든 학습지원센터로 문의해 주세요.';
+    } else {
+      $('doneTitle').textContent = '접수되었습니다';
+      $('donePick').style.display = 'inline-block';
+      $('donePick').textContent = res.label;
+      $('doneMsg').textContent = '선택하신 시간에 맞춰 연락드리겠습니다. 감사합니다.';
+    }
+    window.scrollTo(0,0);
+  }
+
+  function loadData(){
+    return api('getPageData').then(function(d){ state.data = d; refresh(); })
+      .catch(function(){ toast('시간대 정보를 불러오지 못했습니다. 새로고침해 주세요.'); });
+  }
+
+  /* ── 시작 ── */
+  if (MODE === 'mock') $('previewBar').style.display = 'block';
+  // 링크에 ?tel=01012345678 을 붙이면 연락처가 미리 채워집니다 (선택 사항)
+  function prefill(t){ if (t) { $('phone').value = fmt(digits(t)); refresh(); } }
+  if (MODE === 'gas' && google.script.url) {
+    google.script.url.getLocation(function(loc){ prefill(loc && loc.parameter && loc.parameter.tel); });
+  } else {
+    try { prefill(new URLSearchParams(location.search).get('tel')); } catch (e) {}
+  }
+  refresh();
+  loadData();
+})();
+</script>
+</body>
+</html>
