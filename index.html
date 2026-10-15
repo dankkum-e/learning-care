@@ -61,6 +61,10 @@
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#333;color:#fff;
     padding:12px 18px;border-radius:10px;font-size:14px;max-width:90%;display:none;z-index:9}
   .loading{opacity:.55;pointer-events:none}
+  .chat{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--sub)}
+  .chat p{margin:0 0 8px}
+  .chat-tit{display:block;font-weight:700;color:var(--ink);margin-bottom:4px}
+  .chat-link{display:inline-block;color:var(--orange-d);font-weight:600;text-decoration:underline;word-break:break-all}
   .notice{font-size:13px;color:var(--orange-d);background:var(--orange-l);border-radius:10px;padding:10px 12px;margin-top:10px;display:none}
   .privacy{margin-top:22px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
   .privacy .ptit{font-size:13.5px;font-weight:700;padding:12px 14px;background:#FAFAFA;border-bottom:1px solid var(--line)}
@@ -80,15 +84,19 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="preview" id="previewBar">미리보기 모드 · 시트에 기록되지 않습니다<br>(현재 11:40 가정 · 12:00은 마감 예시 · 010-0000-0000은 명단 외 번호 예시)</div>
+  <div class="preview" id="previewBar">미리보기 모드 · 시트에 기록되지 않습니다<br>(현재 10:20 가정 · 12:00은 마감 예시 · 010-0000-0000은 명단 외 번호 예시)</div>
 
   <div id="formView">
     <div class="card intro">
       <span class="brand">[단꿈e 학습지원센터]</span>
       <p>단꿈e 학습을 선택해 주셔서 감사합니다.</p>
-      <p>학습 시작에 도움이 되는 몇 가지 내용을 안내드리고자 연락드립니다.</p>
-      <p>아래에서 통화 가능한 시간대를 선택해 주시면 해당 시간에 맞춰 연락드리겠습니다.</p>
+      <p>학습 시작에 도움이 되는 몇 가지 내용을 안내드리고자 연락드립니다. 아래에서 통화 가능한 시간대를 선택해 주시면 해당 시간에 맞춰 연락드리겠습니다.</p>
       <p class="note">시간대를 선택하지 않으실 경우, 별도 시간 지정 없이 연락드릴 수 있는 점 참고 부탁드립니다.</p>
+      <div class="chat">
+        <p>다른 날 통화를 원하시거나 원하시는 시간대가 없는 경우에는 채팅 상담으로 문의해 주시면 안내드리겠습니다.</p>
+        <span class="chat-tit">▼ 채팅 상담</span>
+        <a class="chat-link" href="https://dankkume.channel.io" target="_blank" rel="noopener">https://dankkume.channel.io</a>
+      </div>
     </div>
 
     <div class="card" id="formCard">
@@ -103,8 +111,8 @@
       <div class="field" style="margin-bottom:14px">
         <label class="tit">시간</label>
         <div class="grid2">
-          <button type="button" class="box period" data-period="오전">오전<span class="s">11:00 ~ 12:30</span></button>
-          <button type="button" class="box period" data-period="오후">오후<span class="s">14:30 ~ 16:00</span></button>
+          <button type="button" class="box period" data-period="오전">오전<span class="s">10:00 ~ 11:30</span></button>
+          <button type="button" class="box period" data-period="오후">오후<span class="s">12:00 ~ 16:00</span></button>
         </div>
         <div class="notice" id="timeNotice"></div>
         <div id="times">
@@ -163,10 +171,10 @@ var API_URL = 'https://script.google.com/macros/s/AKfycbwWUkj017tcWZwCtq-IavESVC
   var MODE = HAS_GAS ? 'gas' : (API_URL ? 'api' : 'mock');
 
   var mock = {
-    nowMin: 11 * 60 + 40,          // 미리보기에서는 11:40으로 가정
+    nowMin: 10 * 60 + 20,          // 미리보기에서는 10:20으로 가정
     counts: {'12:00': 5},
     last: null,
-    slots: {'오전':['11:00','11:30','12:00','12:30'],'오후':['14:30','15:00','15:30','16:00']},
+    slots: {'오전':['10:00','10:30','11:00','11:30'],'오후':['12:00','14:30','15:00','15:30','16:00']},
     isPast: function(t){ var p = t.split(':'); return mock.nowMin >= (+p[0]) * 60 + (+p[1]); },
     getPageData: function(){
       var full = {}, past = {};
